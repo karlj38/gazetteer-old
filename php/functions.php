@@ -56,6 +56,18 @@ function getGeoCode()
     }
 }
 
+function getCountry()
+{
+    if ($country = $_GET["country"] ?? null) {
+        $opencage = opencage($country);
+        $opencage = json_decode($opencage);
+        $result = $opencage->results[0];
+        if ($opencage->status->code === 200) {
+            return json_encode($result);
+        }
+    }
+}
+
 function getBorders()
 {
     if ($code = $_REQUEST["countryCode"] ?? null) {

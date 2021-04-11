@@ -12,6 +12,9 @@ if ($api = $_GET["get"] ?? null) {
         case "geocode":
             echo getGeoCode();
             break;
+        case "country":
+            echo getCountry();
+            break;
         case "borders":
             echo getBorders();
             break;
