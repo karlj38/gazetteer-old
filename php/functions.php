@@ -41,7 +41,16 @@ function getGeoCode()
     if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
         $geocode =  json_decode(opencage("$lat+$lng"));
         if ($geocode->status->code === 200) {
-            return json_encode($geocode->results[0]);
+            $result = $geocode->results[0];
+            if ($continent = $result->components->continent ?? null) {
+                if ($continent === "Antarctica") {
+                    $result->components->country = "Antarctica";
+                    $result->components->country_code = "AQ";
+                } elseif ($result->components->country === "Côte d'Ivoire") {
+                    $result->components->country = "Ivory Coast";
+                }
+                return json_encode($result);
+            }
         }
     }
 }
