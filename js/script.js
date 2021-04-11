@@ -42,12 +42,22 @@ function getCountryList() {
 
 function submitForm(event) {
   event.preventDefault();
-  window.countryName = $("#countryList").val();
-  const countryId = countryName.replace(/ /g, "-");
-  window.countryCode = $(`#${countryId}`).attr("data");
-  document.title = `Gazetteer | ${countryName}`;
-  location.hash = countryName;
-  getCountry();
+  const search = $("#countryList").val();
+  validateSearch(search);
+}
+
+function validateSearch(search) {
+  const countryId = search.replace(/ /g, "-");
+  if ($(`#${countryId}`).length) {
+    window.countryName = search;
+    window.countryCode = $(`#${countryId}`).attr("data");
+    document.title = `Gazetteer | ${countryName}`;
+    location.hash = countryName;
+    console.log(countryName, countryCode);
+    getCountry();
+  } else {
+    alert("Not a valid country");
+  }
 }
 
 function getCountry() {}
