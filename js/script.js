@@ -33,7 +33,19 @@ function submitForm(event) {
   event.preventDefault();
 }
 
+function getCountryList() {
+  $.getJSON("php/api", { get: "countryList" }, function (data, status) {
+    data.forEach((country) => {
+      const id = country[0].replace(/ /g, "-");
+      $("#countries").append(
+        `<option id="${id}" value="${country[0]}" data="${country[1]}">${country[0]}</option>`
+      );
+    });
+  });
+}
+
 $(function () {
+  getCountryList();
   init();
 });
 
