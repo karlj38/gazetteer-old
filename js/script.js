@@ -27,6 +27,18 @@ function init() {
 
   L.control.layers(baseLayers).addTo(map);
   L.control.zoom({ position: "bottomleft" }).addTo(map);
+
+  map.on("locationfound", onLocationFound);
+  map.on("locationerror", onLocationError);
+  map.locate();
+}
+
+function onLocationFound(e) {
+  geocode(e.latlng.lat, e.latlng.lng);
+}
+
+function onLocationError(e) {
+  alert(e.message);
 }
 
 function getCountryList() {
@@ -65,6 +77,17 @@ function submitForm(event) {
   event.preventDefault();
   const search = $("#countryList").val();
   validateSearch(search);
+}
+
+function geocode(lat, lng) {
+  if (lat && lng) {
+    console.log(lat, lng);
+    $.getJSON("php/api", { get: "geocode", lat, lng }, function (data, status) {
+      console.log(data);
+    }).fail(function () {
+      alert("Geocode error");
+    });
+  }
 }
 
 function getCountry() {
