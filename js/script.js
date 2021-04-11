@@ -31,6 +31,8 @@ function init() {
   map.on("locationfound", onLocationFound);
   map.on("locationerror", onLocationError);
   map.locate();
+
+  map.on("click", onMapClick);
 }
 
 function onLocationFound(e) {
@@ -77,6 +79,12 @@ function submitForm(event) {
   event.preventDefault();
   const search = $("#countryList").val();
   validateSearch(search);
+}
+
+function onMapClick(e) {
+  const lat = e.latlng.lat % 90;
+  const lng = e.latlng.lng > 180 ? e.latlng.lng - 360 : e.latlng.lng;
+  geocode(lat, lng);
 }
 
 function geocode(lat, lng) {
