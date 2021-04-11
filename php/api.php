@@ -9,5 +9,8 @@ if ($api = $_GET["get"] ?? null) {
         case "countryList":
             echo getCountrylist();
             break;
+        case "borders":
+            echo getBorders();
+            break;
     }
 }
