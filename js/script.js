@@ -67,7 +67,47 @@ function submitForm(event) {
   validateSearch(search);
 }
 
-function getCountry() {}
+function getCountry() {
+  resetMap();
+  getBorders();
+}
+
+function resetMap() {
+  if (window.borders) {
+    map.removeLayer(borders);
+  }
+}
+
+function getBorders() {
+  $.getJSON(
+    "php/api",
+    { get: "borders", countryCode: countryCode },
+    function (data, status) {
+      let borders = [];
+      if (data.geometry.type === "MultiPolygon") {
+        data.geometry.coordinates.forEach((poly) => {
+          let coords = [];
+          poly[0].forEach((coord) => {
+            const lat = coord[1];
+            const lng = coord[0];
+            coords.push([lat, lng]);
+          });
+          borders.push(coords);
+        });
+      } else {
+        data.geometry.coordinates[0].forEach((coord) => {
+          const lng = coord[0];
+          const lat = coord[1];
+          borders.push([lat, lng]);
+        });
+      }
+      map.flyToBounds(borders);
+      window.borders = L.polygon(borders).addTo(map);
+    }
+  ).fail(function () {
+    alert(`Borders not found (${countryCode})`);
+  });
+}
 
 $(function () {
   getCountryList();
