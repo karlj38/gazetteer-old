@@ -9,9 +9,9 @@ if ($api = $_GET["get"] ?? null) {
         case "countryList":
             echo getCountrylist();
             break;
-        case "geocode":
-            echo getGeoCode();
-            break;
+            // case "geocode":
+            //     echo getGeoCode();
+            //     break;
         case "country":
             echo getCountry();
             break;

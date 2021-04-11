@@ -36,12 +36,36 @@ function openCage($search)
     return curl($url);
 }
 
-function getGeoCode()
+// function getGeoCode()
+// {
+//     if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
+//         $geocode =  json_decode(opencage("$lat+$lng"));
+//         if ($geocode->status->code === 200) {
+//             $result = $geocode->results[0];
+//             if ($continent = $result->components->continent ?? null) {
+//                 if ($continent === "Antarctica") {
+//                     $result->components->country = "Antarctica";
+//                     $code = "ISO_3166-1_alpha-2";
+//                     $result->components->$code = "AQ";
+//                 } elseif ($result->components->country === "Côte d'Ivoire") {
+//                     $result->components->country = "Ivory Coast";
+//                 }
+//                 return json_encode($result);
+//             }
+//         }
+//     }
+// }
+
+function getCountry()
 {
     if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
-        $geocode =  json_decode(opencage("$lat+$lng"));
-        if ($geocode->status->code === 200) {
-            $result = $geocode->results[0];
+        $opencage = opencage("$lat+$lng");
+    } elseif ($country = $_GET["country"] ?? null) {
+        $opencage = opencage($country);
+    }
+    $opencage = json_decode($opencage);
+    if (($status = $opencage->status->code ?? null) && $status === 200) {
+        if ($result = $opencage->results[0] ?? null) {
             if ($continent = $result->components->continent ?? null) {
                 if ($continent === "Antarctica") {
                     $result->components->country = "Antarctica";
@@ -52,18 +76,6 @@ function getGeoCode()
                 }
                 return json_encode($result);
             }
-        }
-    }
-}
-
-function getCountry()
-{
-    if ($country = $_GET["country"] ?? null) {
-        $opencage = opencage($country);
-        $opencage = json_decode($opencage);
-        $result = $opencage->results[0];
-        if ($opencage->status->code === 200) {
-            return json_encode($result);
         }
     }
 }

@@ -36,7 +36,9 @@ function init() {
 }
 
 function onLocationFound(e) {
-  geocode(e.latlng.lat, e.latlng.lng);
+  const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+  getCountry({ lat, lng });
 }
 
 function onLocationError(e) {
@@ -66,10 +68,7 @@ function validateSearch(search) {
   if ($(`#${countryId}`).length) {
     window.countryName = search;
     window.countryCode = $(`#${countryId}`).attr("data");
-    document.title = `Gazetteer | ${countryName}`;
-    location.hash = countryName;
-    console.log(countryName, countryCode);
-    getCountry();
+    getCountry({ countryName });
   } else {
     alert("Not a valid country");
   }
@@ -84,26 +83,43 @@ function submitForm(event) {
 function onMapClick(e) {
   const lat = e.latlng.lat % 90;
   const lng = e.latlng.lng > 180 ? e.latlng.lng - 360 : e.latlng.lng;
-  geocode(lat, lng);
+  getCountry({ lat, lng });
 }
 
-function geocode(lat, lng) {
-  if (lat && lng) {
-    console.log(lat, lng);
-    $.getJSON("php/api", { get: "geocode", lat, lng }, function (data, status) {
-      console.log(data);
+// function geocode(lat, lng) {
+//   if (lat && lng) {
+//     console.log(lat, lng);
+//     $.getJSON("php/api", { get: "geocode", lat, lng }, function (data, status) {
+//       console.log(data);
+//       window.countryName = data.components.country;
+//       window.countryCode = data.components["ISO_3166-1_alpha-2"];
+//       getCountry();
+//     }).fail(function () {
+//       alert("Geocode error");
+//     });
+//   }
+// }
+
+function getCountry({ countryName, lat, lng }) {
+  resetMap();
+  let params = { get: "country" };
+  if (countryName) {
+    params.country = countryName;
+  } else if (lat && lng) {
+    params.lat = lat;
+    params.lng = lng;
+  }
+  $.getJSON("php/api", params, function (data, status) {
+    console.log(data);
+    if (lat && lng) {
       window.countryName = data.components.country;
       window.countryCode = data.components["ISO_3166-1_alpha-2"];
-      getCountry();
-    }).fail(function () {
-      alert("Geocode error");
-    });
-  }
-}
-
-function getCountry() {
-  resetMap();
-  getBorders();
+    }
+    window.countryData = data;
+    document.title = `Gazetteer | ${window.countryName}`;
+    location.hash = window.countryName;
+    getBorders();
+  });
 }
 
 function resetMap() {
