@@ -29,10 +29,6 @@ function init() {
   L.control.zoom({ position: "bottomleft" }).addTo(map);
 }
 
-function submitForm(event) {
-  event.preventDefault();
-}
-
 function getCountryList() {
   $.getJSON("php/api", { get: "countryList" }, function (data, status) {
     data.forEach((country) => {
@@ -43,6 +39,18 @@ function getCountryList() {
     });
   });
 }
+
+function submitForm(event) {
+  event.preventDefault();
+  window.countryName = $("#countryList").val();
+  const countryId = countryName.replace(/ /g, "-");
+  window.countryCode = $(`#${countryId}`).attr("data");
+  document.title = `Gazetteer | ${countryName}`;
+  location.hash = countryName;
+  getCountry();
+}
+
+function getCountry() {}
 
 $(function () {
   getCountryList();
