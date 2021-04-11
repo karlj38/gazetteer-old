@@ -37,13 +37,14 @@ function getCountryList() {
         `<option id="${id}" value="${country[0]}" data="${country[1]}">${country[0]}</option>`
       );
     });
-  });
+  }).then(checkURLHash);
 }
 
-function submitForm(event) {
-  event.preventDefault();
-  const search = $("#countryList").val();
-  validateSearch(search);
+function checkURLHash() {
+  if (location.hash) {
+    hash = decodeURI(location.hash.substring(1));
+    validateSearch(hash);
+  }
 }
 
 function validateSearch(search) {
@@ -58,6 +59,12 @@ function validateSearch(search) {
   } else {
     alert("Not a valid country");
   }
+}
+
+function submitForm(event) {
+  event.preventDefault();
+  const search = $("#countryList").val();
+  validateSearch(search);
 }
 
 function getCountry() {}
