@@ -45,7 +45,8 @@ function getGeoCode()
             if ($continent = $result->components->continent ?? null) {
                 if ($continent === "Antarctica") {
                     $result->components->country = "Antarctica";
-                    $result->components->country_code = "AQ";
+                    $code = "ISO_3166-1_alpha-2";
+                    $result->components->$code = "AQ";
                 } elseif ($result->components->country === "Côte d'Ivoire") {
                     $result->components->country = "Ivory Coast";
                 }

@@ -92,6 +92,9 @@ function geocode(lat, lng) {
     console.log(lat, lng);
     $.getJSON("php/api", { get: "geocode", lat, lng }, function (data, status) {
       console.log(data);
+      window.countryName = data.components.country;
+      window.countryCode = data.components["ISO_3166-1_alpha-2"];
+      getCountry();
     }).fail(function () {
       alert("Geocode error");
     });
