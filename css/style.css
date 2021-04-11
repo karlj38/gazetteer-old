@@ -51,7 +51,10 @@ body {
 }
 
 html,
-body,
-#map {
+body {
   height: 100vh;
+}
+
+#map {
+  height: calc(100vh - 54px);
 }

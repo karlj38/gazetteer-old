@@ -29,6 +29,10 @@ function init() {
   L.control.zoom({ position: "bottomleft" }).addTo(map);
 }
 
+function submitForm(event) {
+  event.preventDefault();
+}
+
 $(function () {
   init();
 });

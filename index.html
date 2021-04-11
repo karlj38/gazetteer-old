@@ -14,6 +14,40 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <header class="container-fluid py-2">
+      <div class="row">
+        <div class="col">
+          <form
+            id="countryForm"
+            onsubmit="submitForm(event)"
+            class="float-left"
+          >
+            <div class="input-group">
+              <input
+                type="search"
+                list="countries"
+                name="country"
+                placeholder="Search..."
+                class="form-control"
+                id="countryList"
+              />
+              <datalist id="countries"></datalist>
+              <div class="input-group-append">
+                <button
+                  type="submit"
+                  class="btn btn-primary rounded-right mr-2"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+          <button class="btn btn-primary d-inline mr-1" onclick="locate()">
+            <i class="fas fa-location-arrow"></i>
+          </button>
+        </div>
+      </div>
+    </header>
     <div id="map"></div>
     <div id="preloader"></div>
     <script src="vendors/jQuery3.6.0/jquery-3.6.0.min.js"></script>
