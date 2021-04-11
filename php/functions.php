@@ -17,6 +17,35 @@ function getCountryList()
     return json_encode($countries);
 }
 
+function curl($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+
+function openCage($search)
+{
+    global $opencage;
+    $search = urlencode($search);
+    $url = "https://api.opencagedata.com/geocode/v1/json?q=$search&pretty=1&limit=1&key=$opencage";
+    return curl($url);
+}
+
+function getGeoCode()
+{
+    if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
+        $geocode =  json_decode(opencage("$lat+$lng"));
+        if ($geocode->status->code === 200) {
+            return json_encode($geocode->results[0]);
+        }
+    }
+}
+
 function getBorders()
 {
     if ($code = $_REQUEST["countryCode"] ?? null) {
