@@ -113,7 +113,7 @@ function getCountry({ countryName, lat, lng }) {
     console.log(data);
     if (lat && lng) {
       window.countryName = data.components.country;
-      window.countryCode = data.components["ISO_3166-1_alpha-2"];
+      window.countryCode = data.components.country_code.toUpperCase();
     }
     window.countryData = data;
     document.title = `Gazetteer | ${window.countryName}`;

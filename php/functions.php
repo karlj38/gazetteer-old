@@ -76,8 +76,7 @@ function getCountry()
             if ($continent = $result->components->continent ?? null) {
                 if ($continent === "Antarctica") {
                     $result->components->country = "Antarctica";
-                    $code = "ISO_3166-1_alpha-2";
-                    $result->components->$code = "AQ";
+                    $result->components->country_code = "AQ";
                 } elseif ($result->components->country === "Côte d'Ivoire") {
                     $result->components->country = "Ivory Coast";
                 }
