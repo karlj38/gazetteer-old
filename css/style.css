@@ -62,3 +62,8 @@ body {
 #countryList {
   box-shadow: none;
 }
+
+#infoContainer {
+  display: none;
+  height: 33vh;
+}

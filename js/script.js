@@ -124,6 +124,9 @@ function getCountry({ countryName, lat, lng }) {
 }
 
 function resetMap() {
+  if ($("#infoContainer").css("display") === "block") {
+    closePanel();
+  }
   if (window.borders) {
     map.removeLayer(borders);
   }
@@ -176,9 +179,38 @@ function countryPopup() {
   let content = `<h1 class="text-center">${countryName}</h1>`;
   content += `<button id="expand" class="btn btn-primary text-center mx-auto d-block" onclick="moreInfo()">Learn more</button>`;
   countryMarker.bindPopup(content).openPopup();
+
   $(".leaflet-popup-content-wrapper")
     .prepend(`<img src="${flag}" class="w-100">`)
     .addClass("pt-0 px-0 overflow-hidden");
+
+  countryMarker.on("popupopen", function () {
+    if ($("#infoContainer").css("display") === "block") {
+      $("#expand").text("Hide panel");
+    } else {
+      $("#expand").text("Learn more");
+    }
+  });
+}
+
+function moreInfo() {
+  if ($("#infoContainer").css("display") === "none") {
+    openPanel();
+  } else {
+    closePanel();
+  }
+}
+
+function openPanel() {
+  $("#map").animate({ height: "-=33vh" });
+  $("#infoContainer").slideToggle();
+  $("#expand").text("Hide panel");
+}
+
+function closePanel() {
+  $("#map").animate({ height: "+=33vh" });
+  $("#infoContainer").slideToggle();
+  $("#expand").text("Learn more");
 }
 
 $(function () {
