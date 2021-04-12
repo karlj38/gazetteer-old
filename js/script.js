@@ -7,7 +7,7 @@ function init() {
     ],
     zoomControl: false,
   }).fitWorld();
-
+  window.countryMarker = L.marker();
   const sat = L.tileLayer.provider("Esri.WorldImagery").addTo(map);
   const night = L.tileLayer.provider("NASAGIBS.ViirsEarthAtNight2012");
   const street = L.tileLayer.provider("Jawg.Streets", {
@@ -119,6 +119,7 @@ function getCountry({ countryName, lat, lng }) {
     document.title = `Gazetteer | ${window.countryName}`;
     location.hash = window.countryName;
     getBorders();
+    countryPopup();
   });
 }
 
@@ -126,6 +127,7 @@ function resetMap() {
   if (window.borders) {
     map.removeLayer(borders);
   }
+  map.removeLayer(countryMarker);
 }
 
 function getBorders() {
@@ -157,6 +159,26 @@ function getBorders() {
   ).fail(function () {
     alert(`Borders not found (${countryCode})`);
   });
+}
+
+function countryPopup() {
+  const lat = countryData.rest.latlng[0];
+  const lng = countryData.rest.latlng[1];
+  const flag = countryData.rest.flag;
+
+  const countryIcon = L.ExtraMarkers.icon({
+    prefix: "fa",
+    icon: "fa-flag",
+    markerColor: "blue",
+  });
+  countryMarker = L.marker([lat, lng], { icon: countryIcon }).addTo(map);
+
+  let content = `<h1 class="text-center">${countryName}</h1>`;
+  content += `<button id="expand" class="btn btn-primary text-center mx-auto d-block" onclick="moreInfo()">Learn more</button>`;
+  countryMarker.bindPopup(content).openPopup();
+  $(".leaflet-popup-content-wrapper")
+    .prepend(`<img src="${flag}" class="w-100">`)
+    .addClass("pt-0 px-0 overflow-hidden");
 }
 
 $(function () {
