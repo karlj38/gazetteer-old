@@ -63,6 +63,12 @@ function Wiki($search)
     return curl($url);
 }
 
+function restCountry($code)
+{
+    $url = "https://restcountries.eu/rest/v2/alpha/$code";
+    return curl($url);
+}
+
 function getCountry()
 {
     if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
@@ -83,6 +89,11 @@ function getCountry()
                 $country = $result->components->country;
                 $wikiResult = json_decode(Wiki($country));
                 $result->wiki = $wikiResult[3][0] ?? null;
+
+                $countryCode = $result->components->country_code;
+                $restResult = json_decode(restCountry($countryCode));
+
+                $result->rest = $restResult ?? null;
                 return json_encode($result);
             }
         }
