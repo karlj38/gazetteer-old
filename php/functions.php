@@ -83,10 +83,10 @@ function getCountry()
                 if ($continent === "Antarctica") {
                     $result->components->country = "Antarctica";
                     $result->components->country_code = "AQ";
-                } elseif ($result->components->country === "Côte d'Ivoire") {
+                } elseif ($result->components->country_code === "ci") {
                     $result->components->country = "Ivory Coast";
                 }
-                $country = $result->components->country;
+                $country = $country ?? $result->components->country;
                 $wikiResult = json_decode(Wiki($country));
                 $result->wiki = $wikiResult[3][0] ?? null;
 
