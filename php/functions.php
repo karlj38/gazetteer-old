@@ -56,6 +56,13 @@ function openCage($search)
 //     }
 // }
 
+function Wiki($search)
+{
+    $search = urlencode($search);
+    $url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=$search&limit=1";
+    return curl($url);
+}
+
 function getCountry()
 {
     if (($lat = $_GET["lat"] ?? null) && ($lng = $_GET["lng"] ?? null)) {
@@ -74,6 +81,9 @@ function getCountry()
                 } elseif ($result->components->country === "Côte d'Ivoire") {
                     $result->components->country = "Ivory Coast";
                 }
+                $country = $result->components->country;
+                $wikiResult = json_decode(Wiki($country));
+                $result->wiki = $wikiResult[3][0] ?? null;
                 return json_encode($result);
             }
         }
