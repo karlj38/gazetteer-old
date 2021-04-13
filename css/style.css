@@ -71,3 +71,13 @@ body {
 .table-hover tbody tr:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.currencyFlag {
+  width: 50px;
+  max-height: 30px;
+}
