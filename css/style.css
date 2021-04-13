@@ -67,3 +67,7 @@ body {
   display: none;
   height: 33vh;
 }
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}

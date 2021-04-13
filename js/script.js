@@ -124,6 +124,7 @@ function getCountry({ countryName, lat, lng }) {
 }
 
 function resetMap() {
+  $("#infoContainer > .row").empty();
   if ($("#infoContainer").css("display") === "block") {
     closePanel();
   }
@@ -196,6 +197,9 @@ function countryPopup() {
 function moreInfo() {
   if ($("#infoContainer").css("display") === "none") {
     openPanel();
+    if (!$("#infoSection").length) {
+      countryInfo();
+    }
   } else {
     closePanel();
   }
@@ -205,6 +209,54 @@ function openPanel() {
   $("#map").animate({ height: "-=33vh" });
   $("#infoContainer").slideToggle();
   $("#expand").text("Hide panel");
+}
+
+function countryInfo() {
+  country = {};
+  country["Country Code"] = countryCode;
+  country.Capital = countryData.rest.capital || null;
+  country.Continent = countryData.components.continent || null;
+  country.Population = countryData.rest.population || null;
+  const landarea = countryData.rest.area || null;
+  country["Land Area"] = landarea ? `${landarea} km<sup>2</sup>` : null;
+  const tz = countryData.annotations.timezone.short_name || null;
+  let offset = countryData.annotations.timezone.offset_string || null;
+  offset = offset ? `(${offset})` : null;
+  country["Time Zone"] = `${tz} ${offset}`;
+  callcode = countryData.annotations.callingcode || null;
+  country["Calling Code"] = callcode ? `+${callcode}` : null;
+  country["TLD"] = countryData.rest.topLevelDomain || null;
+  country.Demonym = countryData.rest.demonym || null;
+  const wiki = countryData.wiki || null;
+  country.Wikipedia = wiki
+    ? `<a href="${wiki}" target="_blank">Wikipedia</a>`
+    : null;
+  let langArr = [];
+  countryData.rest.languages.forEach((lang) => langArr.push(lang.name));
+  country.Language = langArr.join(", ");
+
+  let properties = Object.keys(country).sort();
+  let countryDetails = {};
+  properties.forEach((prop) => (countryDetails[prop] = country[prop]));
+
+  $("#infoContainer div.row").append(
+    `<div id="infoSection" class="col-md-4 border"></div>`
+  );
+  $("#infoSection").append(`<h2>Country Information</h2>`);
+  $("#infoSection").append(
+    `<table class="table table-sm table-hover"></table>`
+  );
+  $("#infoSection table").append(`<tbody></tbody>`);
+
+  for (let key in countryDetails) {
+    if (countryDetails[key]) {
+      $("#infoSection tbody").append(`<tr></tr>`);
+      $("#infoSection tr:last-child").append(`<th scope"row">${key}</th>`);
+      $("#infoSection tr:last-child").append(
+        `<td >${countryDetails[key]}</td>`
+      );
+    }
+  }
 }
 
 function closePanel() {
