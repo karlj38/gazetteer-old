@@ -258,6 +258,11 @@ function countryInfo() {
       );
     }
   }
+  $("#infoSection").append(`<p>
+  Source
+  <a href="https://www.geonames.org/" target="_blank">GeoNames</a> &
+  <a href="https://opencagedata.com/" target="_blank">OpenCage</a>
+</p>`);
 }
 
 function currencies() {
