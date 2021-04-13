@@ -267,63 +267,71 @@ function countryInfo() {
 
 function currencies() {
   if ((currency = countryData.annotations.currency || null)) {
-    const currencySymbol = currency.html_entity || currency.symbol || null;
-    const currencyCode = currency.iso_code || null;
-    const currencyName = currency.name || null;
-    const currencySub = currency.subunit || null;
+    const symbol = currency.html_entity || currency.symbol || null;
+    const code = currency.iso_code || null;
+    const name = currency.name || null;
+    const sub = currency.subunit || null;
 
-    if (currencyCode) {
-      $("#infoContainer div.row").append(
-        `<div id="currencySection" class="col-md-4 border"></div>`
-      );
-      $("#currencySection").append(`<h2>Finance</h2>`);
-      $("#currencySection").append(
-        `<table class="table table-sm table-hover"></table>`
-      );
-      $("#currencySection table").append(`<tbody id="currencies"></tbody>`);
-      $mainCurrency = $("<tr></tr>");
-      $mainCurrency.append(
-        `<td><img src="${countryData.rest.flag}" class="currencyFlag" /></td>`
-      );
-      $mainCurrency.append(`<th scope='row'>${currencyCode}</th>`);
-      $mainCurrency.append(
-        `<td>${currencyName} (${currencySymbol} / ${currencySub})</td>`
-      );
-      $("#currencies").append($mainCurrency);
+    if (code) {
+      displayCurrency({
+        symbol,
+        code,
+        name,
+        sub,
+      });
+      displayRates(code);
     }
-    $.getJSON(
-      "php/api",
-      { get: "currencies", base: currencyCode },
-      function (data, status) {
-        console.log(data);
-        if (data.success) {
-          for (const currency in data.rates) {
-            const rate = Number(data.rates[currency]).toFixed(3);
-            const flag = data.flags[currency];
-            $currency = $("<tr/>");
-            $currency.append(
-              `<td><img src='${flag}' class='currencyFlag'></td>`
-            );
-            $currency.append(`<th scope='row'>${currency}</th>`);
-            $currency.append(`<td>${rate}</td>`);
-            $("#currencies").append($currency);
-          }
-          $("#currencySection").append(`<p>
-            Source
-            <a href="https://exchangerate.host" target="_blank"
-              >exchangerate.host</a
-            >
-          </p>`);
-        } else {
-          $("#currencySection").append(`<p>
-            <a href="https://exchangerate.host" target="_blank"
-              >exchangerate.host unavailable</a
-            >
-          </p>`);
-        }
-      }
-    );
   }
+}
+
+function displayCurrency({ symbol, code, name, sub }) {
+  $("#infoContainer div.row").append(
+    `<div id="currencySection" class="col-md-4 border"></div>`
+  );
+  $("#currencySection").append(`<h2>Finance</h2>`);
+  $("#currencySection").append(
+    `<table class="table table-sm table-hover"></table>`
+  );
+  $("#currencySection table").append(`<tbody id="currencies"></tbody>`);
+  $mainCurrency = $("<tr></tr>");
+  $mainCurrency.append(
+    `<td><img src="${countryData.rest.flag}" class="currencyFlag" /></td>`
+  );
+  $mainCurrency.append(`<th scope='row'>${code}</th>`);
+  $mainCurrency.append(`<td>${name} (${symbol} / ${sub})</td>`);
+  $("#currencies").append($mainCurrency);
+}
+
+function displayRates(code) {
+  $.getJSON(
+    "php/api",
+    { get: "currencies", base: code },
+    function (data, status) {
+      if (data.success) {
+        for (const currency in data.rates) {
+          const rate = Number(data.rates[currency]).toFixed(3);
+          const flag = data.flags[currency];
+          $currency = $("<tr/>");
+          $currency.append(`<td><img src='${flag}' class='currencyFlag'></td>`);
+          $currency.append(`<th scope='row'>${currency}</th>`);
+          $currency.append(`<td>${rate}</td>`);
+          $("#currencies").append($currency);
+        }
+        $("#currencySection").append(`<p>
+          Source
+          <a href="https://exchangerate.host" target="_blank"
+            >exchangerate.host</a
+          >
+        </p>`);
+      } else {
+        $("#currencySection").append(`<p>
+          <a href="https://exchangerate.host" target="_blank"
+            >exchangerate.host unavailable</a
+          >
+        </p>`);
+      }
+    }
+  );
 }
 
 function closePanel() {
