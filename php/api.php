@@ -18,5 +18,8 @@ if ($api = $_GET["get"] ?? null) {
         case "borders":
             echo getBorders();
             break;
+        case "currencies":
+            echo getCurrencies();
+            break;
     }
 }

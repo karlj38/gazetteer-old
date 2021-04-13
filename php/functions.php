@@ -112,3 +112,17 @@ function getBorders()
         }
     }
 }
+
+function getCurrencies()
+{
+    if ($base = $_GET["base"] ?? null) {
+        $url = "https://api.exchangerate.host/latest?base=$base&symbols=USD,GBP,EUR,JPY,CNY";
+        $ratesResult = curl($url);
+        $ratesResult = json_decode($ratesResult);
+        $flags = ["CNY" => "svg\China.svg", "EUR" => "svg\Europe.svg", "GBP" => "svg\UK.svg", "JPY" => "svg\Japan.svg", "USD" => "svg\USA.svg"];
+        if ($ratesResult->success) {
+            $ratesResult->flags = $flags;
+            return json_encode($ratesResult);
+        }
+    }
+}
