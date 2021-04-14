@@ -134,13 +134,24 @@ function top10Mountains()
         $url = "http://api.geonames.org/searchJSON?featureClass=T&maxRows=10&orderby=elevation&country=$code&style=full&username=$geonames";
         $top10 =  json_decode(curl($url));
         if ($top10->totalResultsCount > 0) {
-            $top10 = $top10->geonames;
-            for ($i = 0; $i < count($top10); $i++) {
-                $featureName = $top10[$i]->name;
-                $wikiResult = json_decode(Wiki($featureName));
-                $top10[$i]->wiki = $wikiResult[3][0] ?? null;
+            $geonames = $top10->geonames;
+            for ($i = 0; $i < count($geonames); $i++) {
+                $geoname = $geonames[$i];
+                if ($list = $geoname->alternateNames ?? null) {
+                    foreach ($list as $index => $value) {
+                        if ($value->lang === "link") {
+                            $geoname->wiki = $value->name;
+                            break;
+                        }
+                    }
+                }
+                if (!isset($geoname->wiki)) {
+                    $featureName = $geoname->name;
+                    $wikiResult = json_decode(Wiki($featureName));
+                    $top10->geonames[$i]->wiki = $wikiResult[3][0] ?? null;
+                }
             }
-            return json_encode($top10);
+            return json_encode($top10->geonames);
         }
     }
 }
