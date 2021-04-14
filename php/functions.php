@@ -128,7 +128,7 @@ function getCurrencies()
     }
 }
 
-function geonamesTop10($feature)
+function getGeonamesTop10($feature)
 {
     global $geonames;
     switch ($feature) {
@@ -163,6 +163,18 @@ function geonamesTop10($feature)
                 }
             }
             return json_encode($top10->geonames);
+        }
+    }
+}
+
+function getWeather()
+{
+    global $weather;
+    if (($location = $_GET["location"] ?? null) &&  ($country = $_GET["country"] ?? null)) {
+        $url = "https://api.openweathermap.org/data/2.5/weather?q=$location,$country&units=metric&appid=$weather";
+        $result = json_decode(curl($url));
+        if ($result->cod === 200) {
+            return json_encode($result);
         }
     }
 }
