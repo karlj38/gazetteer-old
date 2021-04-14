@@ -102,7 +102,7 @@ function getCountry()
 
 function getBorders()
 {
-    if ($code = $_REQUEST["countryCode"] ?? null) {
+    if ($code = $_GET["countryCode"] ?? null) {
         $json =  file_get_contents("../json/countries.geojson");
         $data = json_decode($json)->features;
         foreach ($data as $country) {
@@ -123,6 +123,24 @@ function getCurrencies()
         if ($ratesResult->success) {
             $ratesResult->flags = $flags;
             return json_encode($ratesResult);
+        }
+    }
+}
+
+function top10Mountains()
+{
+    global $geonames;
+    if ($code = $_GET["countryCode"] ?? null) {
+        $url = "http://api.geonames.org/searchJSON?featureClass=T&maxRows=10&orderby=elevation&country=$code&style=full&username=$geonames";
+        $top10 =  json_decode(curl($url));
+        if ($top10->totalResultsCount > 0) {
+            $top10 = $top10->geonames;
+            for ($i = 0; $i < count($top10); $i++) {
+                $featureName = $top10[$i]->name;
+                $wikiResult = json_decode(Wiki($featureName));
+                $top10[$i]->wiki = $wikiResult[3][0] ?? null;
+            }
+            return json_encode($top10);
         }
     }
 }

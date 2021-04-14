@@ -21,5 +21,8 @@ if ($api = $_GET["get"] ?? null) {
         case "currencies":
             echo getCurrencies();
             break;
+        case "mountains":
+            echo top10Mountains();
+            break;
     }
 }
