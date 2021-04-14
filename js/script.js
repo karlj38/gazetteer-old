@@ -8,6 +8,7 @@ function init() {
     zoomControl: false,
   }).fitWorld();
   window.countryMarker = L.marker();
+  window.cityMarkers = L.layerGroup();
   window.mountainMarkers = L.layerGroup();
   const sat = L.tileLayer.provider("Esri.WorldImagery").addTo(map);
   const night = L.tileLayer.provider("NASAGIBS.ViirsEarthAtNight2012");
@@ -133,6 +134,7 @@ function resetMap() {
     map.removeLayer(borders);
   }
   map.removeLayer(countryMarker);
+  map.removeLayer(cityMarkers);
   map.removeLayer(mountainMarkers);
 }
 
@@ -205,6 +207,7 @@ function moreInfo() {
     if (!$("#infoSection").length) {
       countryInfo();
       currencies();
+      cities();
       mountains();
     }
   } else {
@@ -357,22 +360,61 @@ function mountains() {
         icon: "fa-mountain",
         markerColor: "green",
       });
+
       data.forEach((mountain) => {
         const mountainMarker = L.marker([mountain.lat, mountain.lng], {
           icon: mountainIcon,
           title: mountain.name,
         });
+
         let details = `<h2>${mountain.name}</h2>`;
-        const elevation = mountain.elevation || null;
-        details += `<p><strong>Elevation: </strong>${
-          elevation ? elevation + " m" : "undefined"
-        } </p>`;
+        let elevation = mountain.elevation || null;
+        elevation = elevation ? elevation + " m" : "undefined";
+        details += `<p><strong>Elevation:</strong> ${elevation} </p>`;
         if (mountain.wiki) {
           details += `<p><a href="${mountain.wiki}" target="_blank">Wikipedia</a></p>`;
         }
+
         mountainMarker.bindPopup(details);
         mountains.push(mountainMarker);
         window.mountainMarkers = L.layerGroup(mountains).addTo(map);
+      });
+    }
+  );
+}
+
+function cities() {
+  const countryCode = countryData.components.country_code;
+  $.getJSON(
+    "php/api",
+    { get: "cities", countryCode: countryCode },
+    function (data, status) {
+      let cities = [];
+
+      data.forEach((city) => {
+        const cityIcon = L.ExtraMarkers.icon({
+          prefix: "fa",
+          icon: "fa-city",
+          markerColor:
+            city.name === countryData.rest.capital ? "red" : "yellow",
+        });
+        const cityMarker = L.marker([city.lat, city.lng], {
+          icon: cityIcon,
+          title: city.name,
+        });
+
+        let details = `<h2>${city.name}</h2>`;
+        if (city.name === countryData.rest.capital) {
+          details += `<p class="lead">Capital</p>`;
+        }
+        details += `<p><strong>Population:</strong> ${city.population}</p>`;
+        if (city.wiki) {
+          details += `<p><a href="${city.wiki}" target="_blank">Wikipedia</a></p>`;
+        }
+
+        cityMarker.bindPopup(details);
+        cities.push(cityMarker);
+        window.cityMarkers = L.layerGroup(cities).addTo(map);
       });
     }
   );
