@@ -8,6 +8,7 @@ function init() {
     zoomControl: false,
   }).fitWorld();
   window.countryMarker = L.marker();
+  window.mountainMarkers = L.layerGroup();
   const sat = L.tileLayer.provider("Esri.WorldImagery").addTo(map);
   const night = L.tileLayer.provider("NASAGIBS.ViirsEarthAtNight2012");
   const street = L.tileLayer.provider("Jawg.Streets", {
@@ -132,6 +133,7 @@ function resetMap() {
     map.removeLayer(borders);
   }
   map.removeLayer(countryMarker);
+  map.removeLayer(mountainMarkers);
 }
 
 function getBorders() {
@@ -200,6 +202,7 @@ function moreInfo() {
     if (!$("#infoSection").length) {
       countryInfo();
       currencies();
+      mountains();
     }
   } else {
     closePanel();
@@ -210,6 +213,12 @@ function openPanel() {
   $("#map").animate({ height: "-=33vh" });
   $("#infoContainer").slideToggle();
   $("#expand").text("Hide panel");
+}
+
+function closePanel() {
+  $("#map").animate({ height: "+=33vh" });
+  $("#infoContainer").slideToggle();
+  $("#expand").text("Learn more");
 }
 
 function countryInfo() {
@@ -334,10 +343,36 @@ function displayRates(code) {
   );
 }
 
-function closePanel() {
-  $("#map").animate({ height: "+=33vh" });
-  $("#infoContainer").slideToggle();
-  $("#expand").text("Learn more");
+function mountains() {
+  $.getJSON(
+    "php/api",
+    { get: "mountains", countryCode: countryCode },
+    function (data, status) {
+      let mountains = [];
+      const mountainIcon = L.ExtraMarkers.icon({
+        prefix: "fa",
+        icon: "fa-mountain",
+        markerColor: "green",
+      });
+      data.forEach((mountain) => {
+        const mountainMarker = L.marker([mountain.lat, mountain.lng], {
+          icon: mountainIcon,
+          title: mountain.name,
+        });
+        let details = `<h2>${mountain.name}</h2>`;
+        const elevation = mountain.elevation || null;
+        details += `<p><strong>Elevation: </strong>${
+          elevation ? elevation + " m" : "undefined"
+        } </p>`;
+        if (mountain.wiki) {
+          details += `<p><a href="${mountain.wiki}" target="_blank">Wikipedia</a></p>`;
+        }
+        mountainMarker.bindPopup(details);
+        mountains.push(mountainMarker);
+        window.mountainMarkers = L.layerGroup(mountains).addTo(map);
+      });
+    }
+  );
 }
 
 $(function () {
