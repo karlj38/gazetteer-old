@@ -90,7 +90,8 @@ function getCountry()
                 $wikiResult = json_decode(Wiki($country));
                 $result->wiki = $wikiResult[3][0] ?? null;
 
-                $countryCode = $result->components->country_code;
+                $countryCode = strtoupper($result->components->country_code);
+                $result->components->country_code = $countryCode;
                 $restResult = json_decode(restCountry($countryCode));
 
                 $result->rest = $restResult ?? null;
