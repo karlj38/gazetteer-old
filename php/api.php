@@ -27,8 +27,8 @@ if ($api = $_GET["get"] ?? null) {
         case "cities":
             echo getGeonamesTop10("cities");
             break;
-        case "weather":
-            echo getWeather();
-            break;
+            // case "weather":
+            //     echo getWeather();
+            //     break;
     }
 }

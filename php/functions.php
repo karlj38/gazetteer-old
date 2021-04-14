@@ -156,25 +156,24 @@ function getGeonamesTop10($feature)
                         }
                     }
                 }
+                $location = $geoname->name;
                 if (!isset($geoname->wiki)) {
-                    $featureName = $geoname->name;
-                    $wikiResult = json_decode(Wiki($featureName));
+                    $wikiResult = json_decode(Wiki($location));
                     $top10->geonames[$i]->wiki = $wikiResult[3][0] ?? null;
                 }
+                $top10->geonames[$i]->weather = getWeather($location, $code) ?? null;
             }
             return json_encode($top10->geonames);
         }
     }
 }
 
-function getWeather()
+function getWeather($location, $country)
 {
     global $weather;
-    if (($location = $_GET["location"] ?? null) &&  ($country = $_GET["country"] ?? null)) {
-        $url = "https://api.openweathermap.org/data/2.5/weather?q=$location,$country&units=metric&appid=$weather";
-        $result = json_decode(curl($url));
-        if ($result->cod === 200) {
-            return json_encode($result);
-        }
+    $url = "https://api.openweathermap.org/data/2.5/weather?q=$location,$country&units=metric&appid=$weather";
+    $result = json_decode(curl($url));
+    if ($result->cod === 200) {
+        return $result;
     }
 }
