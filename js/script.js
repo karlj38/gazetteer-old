@@ -177,7 +177,10 @@ function countryPopup() {
     icon: "fa-flag",
     markerColor: "blue",
   });
-  countryMarker = L.marker([lat, lng], { icon: countryIcon }).addTo(map);
+  countryMarker = L.marker([lat, lng], {
+    icon: countryIcon,
+    title: countryName,
+  }).addTo(map);
 
   let content = `<h1 class="text-center">${countryName}</h1>`;
   content += `<button id="expand" class="btn btn-primary text-center mx-auto d-block" onclick="moreInfo()">Learn more</button>`;
