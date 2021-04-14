@@ -306,9 +306,8 @@ function displayCurrency({ symbol, code, name, sub }) {
   );
   $("#currencySection table").append(`<tbody id="currencies"></tbody>`);
   $mainCurrency = $("<tr></tr>");
-  $mainCurrency.append(
-    `<td><img src="${countryData.rest.flag}" class="currencyFlag" /></td>`
-  );
+  const flag = code === "EUR" ? "svg\\Europe.svg" : countryData.rest.flag;
+  $mainCurrency.append(`<td><img src="${flag}" class="currencyFlag" /></td>`);
   $mainCurrency.append(`<th scope='row'>${code}</th>`);
   $mainCurrency.append(`<td>${name} (${symbol} / ${sub})</td>`);
   $("#currencies").append($mainCurrency);
