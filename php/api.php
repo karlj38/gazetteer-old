@@ -22,7 +22,10 @@ if ($api = $_GET["get"] ?? null) {
             echo getCurrencies();
             break;
         case "mountains":
-            echo top10Mountains();
+            echo geonamesTop10("mountains");
+            break;
+        case "cities":
+            echo geonamesTop10("cities");
             break;
     }
 }

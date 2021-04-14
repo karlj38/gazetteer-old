@@ -127,11 +127,21 @@ function getCurrencies()
     }
 }
 
-function top10Mountains()
+function geonamesTop10($feature)
 {
     global $geonames;
+    switch ($feature) {
+        case "cities":
+            $featureClass = "P";
+            $order = "population";
+            break;
+        case "mountains":
+            $featureClass = "T";
+            $order = "elevation";
+            break;
+    }
     if ($code = $_GET["countryCode"] ?? null) {
-        $url = "http://api.geonames.org/searchJSON?featureClass=T&maxRows=10&orderby=elevation&country=$code&style=full&username=$geonames";
+        $url = "http://api.geonames.org/searchJSON?featureClass=$featureClass&maxRows=10&orderby=$order&country=$code&style=full&username=$geonames";
         $top10 =  json_decode(curl($url));
         if ($top10->totalResultsCount > 0) {
             $geonames = $top10->geonames;
