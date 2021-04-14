@@ -226,7 +226,7 @@ function closePanel() {
 
 function countryInfo() {
   country = {};
-  country["Country Code"] = countryCode;
+  country["Country Code"] = countryData.components.country_code;
   country.Capital = countryData.rest.capital || null;
   country.Continent = countryData.components.continent || null;
   country.Population = countryData.rest.population || null;
@@ -346,6 +346,7 @@ function displayRates(code) {
 }
 
 function mountains() {
+  const countryCode = countryData.components.country_code;
   $.getJSON(
     "php/api",
     { get: "mountains", countryCode: countryCode },
