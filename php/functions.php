@@ -232,3 +232,56 @@ function searchMovie($q, $y)
     $url = "https://api.themoviedb.org/3/search/movie?api_key=$tmdb&query=$q&year=$y";
     return curl($url);
 }
+
+function getUniversities()
+{
+    global $link;
+    global $geonames;
+    if (($country = $_GET["country"] ?? null)) {
+        $country = ($country === "United States") ? "USA" : $country;
+        $output = [];
+
+        $sql = "SELECT * FROM universities WHERE Location = '$country' LIMIT 20";
+        $query = $link->query($sql);
+        if ($query->num_rows > 0) {
+            while ($row = $query->fetch_assoc()) {
+                $uni = $row["institution"];
+                $encoded = urlencode($uni);
+                $url = "http://api.geonames.org/wikipediaSearchJSON?title=$encoded&maxRows=1&username=$geonames";
+                $geonamesResult = json_decode(curl($url));
+                $found = false;
+                $from = "";
+
+                $wiki = json_decode(Wiki($uni));
+                $wikiLink = $wiki[3][0] ?? null;
+                $wikiTitle = $wiki[1][0] ?? null;
+                $wikiCheckLink = $geonamesResult->geonames[0]->wikipediaUrl ?? null;
+                $wikiCheckTitle = $geonamesResult->geonames[0]->title ?? null;
+
+                if ($wikiLink && $wikiTitle && $wikiCheckLink && $wikiCheckTitle && (strpos($wikiLink, $wikiCheckLink) > 0 || $wikiTitle === $wikiCheckTitle)) {
+                    $found = true;
+                    $lat = $geonamesResult->geonames[0]->lat;
+                    $lng = $geonamesResult->geonames[0]->lng;
+                    $from = "geo";
+
+                    if ($found) {
+                        if (count($output) < 10) {
+                            array_push($output, [
+                                "uni" => $row["institution"],
+                                "from" => $from,
+                                "world" => $row["world_rank"],
+                                "nat" => $row["national_rank"],
+                                "wiki" => $wikiLink,
+                                "lat" => $lat,
+                                "lng" => $lng
+                            ]);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+            return json_encode($output);
+        }
+    }
+}
