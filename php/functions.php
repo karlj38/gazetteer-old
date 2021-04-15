@@ -184,3 +184,16 @@ function getWeather($location, $country)
         return $result;
     }
 }
+
+function getMedals()
+{
+    global $link;
+    if ($country = $_GET["country"] ?? null) {
+        $sql = "SELECT * FROM olympics WHERE nation = '$country'";
+        $query = $link->query($sql);
+        if ($query->num_rows > 0) {
+            $row = $query->fetch_assoc();
+            return json_encode($row);
+        }
+    }
+}

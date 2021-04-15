@@ -30,5 +30,8 @@ if ($api = $_GET["get"] ?? null) {
             // case "weather":
             //     echo getWeather();
             //     break;
+        case "medals":
+            echo getMedals();
+            break;
     }
 }
