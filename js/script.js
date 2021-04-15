@@ -210,6 +210,7 @@ function moreInfo() {
       cities();
       mountains();
       medals();
+      movies();
     }
   } else {
     closePanel();
@@ -553,6 +554,95 @@ function medals() {
     </p>`);
     }
   );
+}
+
+function movies() {
+  $.getJSON(
+    "php/api",
+    { get: "movies", country: countryName },
+    function (data, status) {
+      // console.log(data);
+      if (data.length) {
+        buildMovieCarousel();
+        fillMovieCarousel(data);
+      }
+    }
+  );
+}
+
+function buildMovieCarousel() {
+  $("#infoContainer .row").append(
+    `<div id="movieSection" class="col border"></div>`
+  );
+  $("#movieSection").append(`<h2>Notable Movies</h2>`);
+  $("#movieSection").append(
+    `<div id="movieCarousel" class="carousel slide" data-ride="carousel"></div`
+  );
+  $("#movieCarousel").append(
+    `<div id="carouselInsert" class="carousel-inner"></div>`
+  );
+  $("#movieCarousel").append(`<a
+  class="carousel-control-prev"
+  href="#movieCarousel"
+  role="button"
+  data-slide="prev"
+>
+  <span
+    class="carousel-control-prev-icon"
+    aria-hidden="true"
+  ></span>
+  <span class="sr-only">Previous</span>
+</a>`);
+  $("#movieCarousel").append(`<a
+  class="carousel-control-next"
+  href="#movieCarousel"
+  role="button"
+  data-slide="next"
+>
+  <span
+    class="carousel-control-next-icon"
+    aria-hidden="true"
+  ></span>
+  <span class="sr-only">Next</span>
+</a>`);
+}
+
+function fillMovieCarousel(data) {
+  data.forEach((movie, i) => {
+    details = `
+    <div class="carousel-item ${i == 0 ? "active" : ""}">
+      <div class="container">
+        <div class = "row">
+          <div class="d-none d-md-flex col-md-6 justify-content-center">
+          <a href="https://www.imdb.com/title/${
+            movie.imdbID
+          }" target="_blank" class="float-left mr-3 mb-3"><img src="${
+      movie.poster
+    }"></a>
+          </div>
+          <div class="col-md-6 movieDesc">
+          <a href="https://www.imdb.com/title/${
+            movie.imdbID
+          }" target="_blank" class="d-md-none float-left mr-3 mb-3"><img src="${
+      movie.poster
+    }"></a>
+            <p class="lead"><a href="https://www.imdb.com/title/${
+              movie.imdbID
+            }" target="_blank">${movie.Title}, ${movie.Year} (${
+      movie.Runtime
+    })</a></p>
+            <p>IMDb Rating: ${movie.imdbRating}</p>
+            <p>Awards: ${movie.Awards}</p>
+            <p>Starring: ${movie.Actors}</p>
+            <p class=" float-left float-md-none">Source <a href="https://www.imdb.com/" target="_blank">IMDb</a> 
+            via <a href="https://data.world/studentoflife/imdb-top-250-lists-and-5000-or-so-data-records/workspace/file?filename=IMDB_Top250movies2_OMDB_Detailed.csv" target="_blank">data.world</a> 
+            & <a href="https://www.omdbapi.com/" target="_blank">OMDb API</a></p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    $("#carouselInsert").append(details);
+  });
 }
 
 $(function () {
