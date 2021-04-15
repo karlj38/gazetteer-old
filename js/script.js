@@ -10,6 +10,7 @@ function init() {
   window.countryMarker = L.marker();
   window.cityMarkers = L.layerGroup();
   window.mountainMarkers = L.layerGroup();
+  window.universityMarkers = L.layerGroup();
   const sat = L.tileLayer.provider("Esri.WorldImagery").addTo(map);
   const night = L.tileLayer.provider("NASAGIBS.ViirsEarthAtNight2012");
   const street = L.tileLayer.provider("Jawg.Streets", {
@@ -136,6 +137,7 @@ function resetMap() {
   map.removeLayer(countryMarker);
   map.removeLayer(cityMarkers);
   map.removeLayer(mountainMarkers);
+  map.removeLayer(universityMarkers);
 }
 
 function getBorders() {
@@ -211,6 +213,7 @@ function moreInfo() {
       mountains();
       medals();
       movies();
+      universities();
     }
   } else {
     closePanel();
@@ -379,8 +382,8 @@ function mountains() {
 
         mountainMarker.bindPopup(details);
         mountains.push(mountainMarker);
-        window.mountainMarkers = L.layerGroup(mountains).addTo(map);
       });
+      window.mountainMarkers = L.layerGroup(mountains).addTo(map);
     }
   );
 }
@@ -419,8 +422,8 @@ function cities() {
 
         cityMarker.bindPopup(details);
         cities.push(cityMarker);
-        window.cityMarkers = L.layerGroup(cities).addTo(map);
       });
+      window.cityMarkers = L.layerGroup(cities).addTo(map);
     }
   );
 }
@@ -643,6 +646,37 @@ function fillMovieCarousel(data) {
     </div>`;
     $("#carouselInsert").append(details);
   });
+}
+
+function universities() {
+  $.getJSON(
+    "php/api",
+    { get: "universities", country: countryName },
+    function (data, status) {
+      console.log(data);
+      let unis = [];
+      const uniIcon = L.ExtraMarkers.icon({
+        prefix: "fa",
+        icon: "fa-university",
+        markerColor: "black",
+      });
+
+      data.forEach((uni) => {
+        const uniMarker = L.marker([uni.lat, uni.lng], {
+          icon: uniIcon,
+          title: uni.uni,
+        });
+        let details = `<h2>${uni.uni}</h2>`;
+        details += `<p><strong>World Rank:</strong> ${uni.world}</p>`;
+        details += `<p><strong>National Rank:</strong> ${uni.nat}</p>`;
+        details += `<p><a href="${uni.wiki}" target="_blank">Wikipedia</a></p>`;
+        details += `<p>Source <a href="https://cwur.org/2020-21.php">CWUR (2020-2021)</a> via <a href="https://data.world/proydu/world-university-rankings-2020-21" target="_blank">data.world</a></p>`;
+        uniMarker.bindPopup(details);
+        unis.push(uniMarker);
+      });
+      window.universityMarkers = L.layerGroup(unis).addTo(map);
+    }
+  );
 }
 
 $(function () {
