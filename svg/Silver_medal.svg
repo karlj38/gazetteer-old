@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" stroke="#999">
+<circle fill="#CCC" stroke-width="7" cx="150" cy="150" r="146"/>
+<g id="b"><g id="a" fill="none">
+<circle stroke-width="9" cx="111" cy="166" r="33"/>
+<circle stroke="#CCC" stroke-width="6" cx="111" cy="166" r="33"/></g>
+<use xlink:href="#a" x="78"/></g>
+<use xlink:href="#b" x="-39" y="-33"/>
+<use xlink:href="#a" x="117" y="-33"/>
+</svg>
