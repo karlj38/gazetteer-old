@@ -209,6 +209,7 @@ function moreInfo() {
       currencies();
       cities();
       mountains();
+      medals();
     }
   } else {
     closePanel();
@@ -483,6 +484,75 @@ function convertTime(unix) {
   let mins = d.getMinutes();
   mins = mins < 10 ? `0${mins}` : mins;
   return `${hours}:${mins}`;
+}
+
+function medals() {
+  $.getJSON(
+    "php/api",
+    { get: "medals", country: countryName },
+    function (data, status) {
+      $("#infoContainer div.row").append(
+        `<div id="medalsSection" class="col-md-4 border"></div>`
+      );
+      $("#medalsSection").append(`<h2>Olympic Medals</h2>`);
+      $("#medalsSection").append(
+        `<table class="table table-sm table-hover"></table>`
+      );
+
+      const header = `
+      <thead>
+        <tr>
+          <th></th>
+          <th scope="col" class="text-center">Total</th>
+          <th scope="col" class="text-center">Summer</th>
+          <th scope="col" class="text-center">Winter</th>
+        </tr>
+    </thead>`;
+      $("#medalsSection table").append(header);
+      $("#medalsSection table").append(`<tbody id="medals"></tbody>`);
+
+      let rows = `<tr>
+      <td class="text-center"><img src="svg/Gold_medal.svg"></td>
+      <td class="text-center">${data.gold}</td>
+      <td class="text-center">${data.so_gold}</td>
+      <td class="text-center">${data.wo_gold}</td>
+      </tr>`;
+      rows += `<tr>
+      <td class="text-center"><img src="svg/Silver_medal.svg"></td>
+      <td class="text-center">${data.silver}</td>
+      <td class="text-center">${data.so_silver}</td>
+      <td class="text-center">${data.wo_silver}</td>
+      </tr>`;
+      rows += `<tr>
+      <td class="text-center"><img src="svg/Bronze_medal.svg"></td>
+      <td class="text-center">${data.bronze}</td>
+      <td class="text-center">${data.so_bronze}</td>
+      <td class="text-center">${data.wo_bronze}</td>
+      </tr>`;
+      rows += `<tr>
+      <td class="text-center"><img src="svg/GoldSilverBronze_medals.svg"></td>
+      <td class="text-center">${data.medal}</td>
+      <td class="text-center">${data.so_medal}</td>
+      <td class="text-center">${data.wo_medal}</td>
+      </tr>`;
+      $("#medals").append(rows);
+
+      if (data.mostsuccessfulsport !== "-") {
+        $("#medalsSection").append(
+          `Most successful sport: ${data.mostsuccessfulsport}`
+        );
+      }
+
+      $("#medalsSection").append(`<p>
+      Source
+      <a
+        href="https://data.world/johayes13/summer-winter-olympic-games/workspace/file?filename=Olympics.csv"
+        target="_blank"
+        >data.world</a
+      >
+    </p>`);
+    }
+  );
 }
 
 $(function () {

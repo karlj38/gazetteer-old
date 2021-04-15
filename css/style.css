@@ -91,3 +91,7 @@ body {
   padding: 0.5rem;
   white-space: nowrap;
 }
+
+#medals img {
+  max-height: 40px;
+}
