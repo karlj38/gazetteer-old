@@ -2,6 +2,13 @@
 
 include "keys.php";
 
+$link = new mysqli("localhost", $dbLogin, $dbPassword, "gazetteer");
+if ($link->connect_error) {
+    die('<p>Failed to connect to MySQL: ' . $link->connect_error . '</p>');
+} else {
+    // echo '<p>Connection to MySQL server successfully established.</p>';
+}
+
 function getCountryList()
 {
     $json =  file_get_contents("../json/countryBorders.geo.json");
