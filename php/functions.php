@@ -197,3 +197,38 @@ function getMedals()
         }
     }
 }
+
+function getMovies()
+{
+    global $link;
+    if ($country = $_GET["country"] ?? null) {
+        $movies = [];
+
+        $country = ($country === "United States") ? "USA" : $country;
+        $country = ($country === "United Kingdom") ? "UK" : $country;
+
+        $sql = "SELECT Title, Year, Ranking, Runtime, Actors, Awards, imdbRating, imdbID FROM movies WHERE Country LIKE '%$country%' ORDER BY 'Ranking' LIMIT 10";
+        $query = $link->query($sql);
+        if ($query->num_rows > 0) {
+            while ($row = $query->fetch_assoc()) {
+                $title = $row["Title"];
+                $year = $row["Year"];
+
+                $searchResults = json_decode(searchMovie($title, $year));
+                if ($poster = $searchResults->results[0]->poster_path ?? null) {
+                    $row["poster"] = "https://image.tmdb.org/t/p/w300$poster";
+                    array_push($movies, $row);
+                }
+            }
+            echo json_encode($movies);
+        }
+    }
+}
+
+function searchMovie($q, $y)
+{
+    global $tmdb;
+    $q = urlencode($q);
+    $url = "https://api.themoviedb.org/3/search/movie?api_key=$tmdb&query=$q&year=$y";
+    return curl($url);
+}

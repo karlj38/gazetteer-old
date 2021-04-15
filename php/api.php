@@ -33,5 +33,8 @@ if ($api = $_GET["get"] ?? null) {
         case "medals":
             echo getMedals();
             break;
+        case "movies":
+            echo getMovies();
+            break;
     }
 }
