@@ -11,6 +11,7 @@ function init() {
   window.cityMarkers = L.layerGroup();
   window.mountainMarkers = L.layerGroup();
   window.universityMarkers = L.layerGroup();
+  window.covidMarkers = L.layerGroup();
   const sat = L.tileLayer.provider("Esri.WorldImagery").addTo(map);
   const night = L.tileLayer.provider("NASAGIBS.ViirsEarthAtNight2012");
   const street = L.tileLayer.provider("Jawg.Streets", {
@@ -138,6 +139,7 @@ function resetMap() {
   map.removeLayer(cityMarkers);
   map.removeLayer(mountainMarkers);
   map.removeLayer(universityMarkers);
+  map.removeLayer(covidMarkers);
 }
 
 function getBorders() {
@@ -677,6 +679,39 @@ function universities() {
       window.universityMarkers = L.layerGroup(unis).addTo(map);
     }
   );
+}
+
+function covid() {
+  resetMap();
+  $.getJSON("php/api", { get: "covid" }, function (data, status) {
+    console.log(data);
+    data.sort((a, b) => b.cases - a.cases);
+    data.forEach((country) => {
+      const r = Math.sqrt(country.cases) * 1500;
+      const details = `
+      <h2>${country.countryName} <img src="${country.flag}" class="thumbnail"></h2>
+      <p>Data from ${country.fromDate} to ${country.toDate}</p>
+      <p><strong>Recent cases : </strong> ${country.cases}</p>
+      <p><strong>Recent deaths : </strong> ${country.deaths}</p>
+      <p>Source <a href="https://github.com/CSSEGISandData/COVID-19" target="_blank">John Hopkins University</a> via <a href="https://covidapi.info" target="_blank">covidapi.info</a></p>
+    `;
+      let covidPopup = L.popup()
+        .setLatLng([country.lat, country.lng])
+        .setContent(details);
+      let area = L.circle([country.lat, country.lng], {
+        radius: r,
+        color: "#f00",
+        weight: 1,
+      })
+        .bindPopup(covidPopup)
+        .addTo(covidMarkers)
+        .on("click", onMapClick)
+        .on("mouseover", function (e) {
+          this.openPopup();
+        });
+    });
+    covidMarkers.addTo(map);
+  });
 }
 
 $(function () {
