@@ -2,7 +2,8 @@
 
 include "keys.php";
 
-$link = new mysqli("localhost", $dbLogin, $dbPassword, "gazetteer");
+// $link = new mysqli("localhost", $dbLogin, $dbPassword, "gazetteer");
+$link = new mysqli($host_name, $user_name, $password, $database);
 if ($link->connect_error) {
     die('<p>Failed to connect to MySQL: ' . $link->connect_error . '</p>');
 } else {
