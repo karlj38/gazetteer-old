@@ -39,5 +39,8 @@ if ($api = $_GET["get"] ?? null) {
         case "universities":
             echo getUniversities();
             break;
+        case "covid":
+            echo getCovid();
+            break;
     }
 }

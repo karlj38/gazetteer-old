@@ -285,3 +285,47 @@ function getUniversities()
         }
     }
 }
+
+function getCovid()
+{
+    $results = [];
+    $yesterday = date("Y-m-d", time() - 60 * 60 * 24);
+    $twoWeeksEarlier = date("Y-m-d", time() - 60 * 60 * 24 * 15);
+    $covidURL = "https://covidapi.info/api/v1/global/timeseries/$twoWeeksEarlier/$yesterday";
+    $covidData = json_decode(curl($covidURL));
+
+    $countriesURL = "https://restcountries.eu/rest/v2";
+    $countries = json_decode(curl($countriesURL));
+    foreach ($covidData->result as $country => $data) {
+
+        foreach ($countries as $restCountry => $restData) {
+            if (($alpha3Code = $restData->alpha3Code ?? null) === $country) {
+                $result = [];
+                $result["countryName"] = $restData->name;
+                $result["alpha2code"] = $restData->alpha2Code;
+                $result["alpha3code"] = $alpha3Code;
+                $result["lat"] = $restData->latlng[0];
+                $result["lng"] = $restData->latlng[1];
+                $result["flag"] = $restData->flag;
+
+                $mostRecent = count($covidData->result->$country) - 1;
+                $historic = ($mostRecent - 7 < 0) ? 0 : ($mostRecent - 7);
+                $latestCases = $covidData->result->$country[$mostRecent]->confirmed;
+                $historicCases = $covidData->result->$country[$historic]->confirmed;
+                $latestDeaths = $covidData->result->$country[$mostRecent]->deaths;
+                $historicDeaths = $covidData->result->$country[$historic]->deaths;
+                $cases = $latestCases - $historicCases;
+                $deaths = $latestDeaths - $historicDeaths;
+
+                $result["cases"] = $cases;
+                $result["deaths"] = $deaths;
+                $result["fromDate"] = $covidData->result->$country[$historic]->date;
+                $result["toDate"] = $covidData->result->$country[$mostRecent]->date;
+
+                array_push($results, $result);
+                break;
+            }
+        }
+    }
+    echo json_encode($results);
+}
