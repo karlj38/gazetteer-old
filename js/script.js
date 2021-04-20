@@ -1,4 +1,7 @@
 function init() {
+  headerHeight = $("header").outerHeight();
+  mapHeight = $(window).outerHeight() - headerHeight;
+  $("#map").outerHeight(mapHeight);
   window.map = L.map("map", {
     minZoom: 2,
     maxBounds: [
